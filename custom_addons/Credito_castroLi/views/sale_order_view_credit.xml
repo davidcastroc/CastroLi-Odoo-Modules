@@ -1,0 +1,72 @@
+<odoo>
+  <data>
+    <record id="view_sale_order_form_credit_banner" model="ir.ui.view">
+      <field name="name">sale.order.form.credit.banner</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+
+        <!-- Insertamos justo después del cliente -->
+        <xpath expr="//field[@name='partner_id']" position="after">
+
+          <!-- Garantizamos que la moneda esté disponible -->
+          <field name="currency_id" invisible="1"/>
+
+          <div name="credit_section" class="oe_inline o_credit_box mt8" invisible="not partner_id">
+
+            <!-- 🟣 Caso: cliente SIN crédito -->
+            <div class="alert alert-secondary mt8 mb8" invisible="cl_credit_limit != 0">
+              💬 <b>Este cliente no tiene condiciones de crédito activas.</b><br/>
+              Todas las ventas deberán ser procesadas con <b>pago contado</b> o inmediato.
+            </div>
+
+            <!-- 🟢 Caso: cliente CON crédito -->
+            <div invisible="cl_credit_limit == 0">
+
+              <h4 style="margin-bottom: 6px;">Crédito del cliente</h4>
+
+              <!-- Línea de badges -->
+              <div class="o_row mb8" style="gap: 8px;">
+
+                <div class="o_col-auto">
+                  <span class="badge bg-warning text-dark border">
+                    💰 <b>Límite:</b>
+                    <field name="cl_credit_limit" readonly="1"
+                      style="visibility: visible !important; display: inline !important; font-weight: bold;"/>
+                  </span>
+                </div>
+
+                <div class="o_col-auto">
+                  <span class="badge bg-danger text-white border">
+                    🔸 <b>Usado:</b>
+                    <field name="cl_credit_used" readonly="1"
+                      style="visibility: visible !important; display: inline !important; font-weight: bold;"/>
+                  </span>
+                </div>
+
+                <div class="o_col-auto">
+                  <span class="badge bg-success text-white border">
+                    🟢 <b>Disponible:</b>
+                    <field name="cl_credit_available" readonly="1"
+                      style="visibility: visible !important; display: inline !important; font-weight: bold;"/>
+                  </span>
+                </div>
+
+              </div>
+
+              <!-- 🚫 Banner rojo si excede límite -->
+              <div class="alert alert-danger mt4 mb8" invisible="not cl_credit_overlimit">
+                ⚠️ <b>Este pedido proyecta superar el límite de crédito del cliente.</b><br/>
+                Solo un administrador podrá aprobarlo.
+              </div>
+
+            </div>
+
+          </div>
+
+        </xpath>
+
+      </field>
+    </record>
+  </data>
+</odoo>

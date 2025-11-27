@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-inherit="point_of_sale.PaymentScreenTop" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('top-content-center')]" position="before">
+            <div class="pos_multicurrency" style="display:flex;justify-content:center;align-items:center;padding-left:1%">
+                <h3>Multicurrency</h3>
+                <input type="checkbox" id="multi_currency_check" t-on-click="show_options"/>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-inherit="point_of_sale.PaymentScreenButtons" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('payment-buttons')]" position="after">
+            <div class="multicurrency_container" style="display:none;">
+                <div>
+                    <h3>Select Currency</h3>
+                    <select class="currecy_list" t-on-change="compute_currency">
+                        <option>Choose</option>
+                    </select>
+                </div>
+                <div class="conversion_container" style="display:none;">
+                    <h3>Currency Conversion</h3>
+                    <div><div class="rate_string"/><div>Total Amount = <span class="total_amount"/></div></div>
+                    <br/>
+                    <div>
+                        <div>Payment Amount In</div>
+                        <input type="number" class="multicurrency_input"/>
+                    </div>
+                    <br/>
+                    <div class="button addpayment" t-on-click="(ev) => this.multi_currency_payment_line(payment_methods_from_config[0])">
+                        <div style="border:2px solid black;padding:5px;width:54%;">Add Cash Payment</div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-inherit="point_of_sale.PaymentScreenPaymentLines" t-inherit-mode="extension">
+        <xpath expr="//t[@t-if='line.selected']//span[hasclass('payment-name')]" position="after">
+            <div t-if="line.converted_currency" style="margin-left:10px;">(
+                <t t-esc="line.converted_currency.amount"/> 
+                <t t-esc="line.converted_currency.symbol"/>)
+            </div>
+        </xpath>
+    </t>
+
+    <t t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="//t[@t-esc='line.name']" position="after">
+            <t t-if="line.converted_currency_amount">
+                (<t t-esc="line.converted_currency_amount"/>
+                 <t t-esc="line.converted_currency_symbol"/>)
+            </t>
+        </xpath>
+    </t>
+</templates>

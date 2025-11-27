@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===== Vista propia de configuración Multi Currency (en pos.config) ===== -->
+    <record id="view_pos_multi_currency_settings_form" model="ir.ui.view">
+        <field name="name">pos.multi.currency.settings.form</field>
+        <field name="model">pos.config</field>
+        <field name="arch" type="xml">
+            <form string="Multi-Currency Settings">
+                <sheet>
+                    <group>
+                        <field name="enable_multicurrency"/>
+                        <field name="currency_ids" widget="many2many_tags"
+                               options="{'no_create': True}"
+                               modifiers="{'invisible': [['enable_multicurrency', '=', False]]}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para abrir la vista -->
+    <record id="action_pos_multi_currency_settings" model="ir.actions.act_window">
+        <field name="name">Multi Currency</field>
+        <field name="res_model">pos.config</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_pos_multi_currency_settings_form"/>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Menú dentro del POS (evita parent inexistentes de v17) -->
+    <menuitem id="menu_pos_multi_currency_settings"
+              name="Multi Currency"
+              parent="point_of_sale.menu_point_root"
+              action="action_pos_multi_currency_settings"
+              sequence="90"/>
+
+    <!-- ===== Herencia: agrega campos al formulario de pos.order ===== -->
+    <record id="view_pos_pos_form_inherit_multi_currency" model="ir.ui.view">
+        <field name="name">pos.order.form.inherit.multi.currency</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount']" position="after">
+                <field name="currency_amount"/>
+                <field name="payment_currency"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

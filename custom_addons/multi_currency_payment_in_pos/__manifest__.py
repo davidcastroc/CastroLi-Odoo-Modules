@@ -7,9 +7,14 @@
     'author': 'CastroLi',
     'license': 'AGPL-3',
     'depends': ['point_of_sale'],
-    'data': [
-        'views/res_config_settings_views.xml',
-    ],
+    'assets': {
+        'point_of_sale.assets_prod': [
+            'multi_currency_payment_in_pos/static/src/js/multicurrency_pos.js',
+        ],
+        'point_of_sale.assets_debug': [
+            'multi_currency_payment_in_pos/static/src/js/multicurrency_pos.js',
+        ],
+    },
     'installable': True,
     'application': False,
 }
